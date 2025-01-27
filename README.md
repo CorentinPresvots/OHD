@@ -13,75 +13,96 @@ The approach simultaneously denoises and compresses power system disturbances by
 
 ### Dictionary Construction
 The dictionary, $\boldsymbol{\Psi}$, is a concatenation of three matrices:
-\[
+```math
+\begin{equation}
 \boldsymbol{\Psi} = \left[\begin{array}{lll}
 \boldsymbol{I} & \mid & \boldsymbol{C} \mid \boldsymbol{S}
 \end{array}\right]_{N \times M}
-\]
+\end{equation}
+```
 - **Impulse Matrix ($\boldsymbol{I}$)**: An identity matrix ($N \times N$) representing discrete impulses.
 - **Cosine Matrix ($\boldsymbol{C}$)**: A set of sampled discrete cosine waveforms ($N \times L$), where:
-  \[
+  ```math
+  \begin{equation}
   \left[\boldsymbol{C}^{L}\right]_{ij} = \sqrt{\frac{2}{L}} \cdot \epsilon_i \cdot \cos\left(\frac{\pi(2j+1)i}{2L}\right)
-  \]
+  \end{equation}
+  ```
+
   $\epsilon_i = \frac{1}{\sqrt{2}}$ for $i = 0$, otherwise $\epsilon_i = 1$.
 - **Sine Matrix ($\boldsymbol{S}$)**: A set of sampled discrete sine waveforms ($N \times L$), where:
-  \[
+  ```math
+  \begin{equation}
   \left[\boldsymbol{S}^{L}\right]_{ij} = \sqrt{\frac{2}{L}} \cdot \epsilon_i \cdot \sin\left(\frac{\pi(2j+1)(i+1)}{2L}\right)
-  \]
+  \end{equation}
+  ```
   $\epsilon_i = \frac{1}{\sqrt{2}}$ for $i = L-1$, otherwise $\epsilon_i = 1$.
 
 ### Sparse Approximation and Matching Pursuit
 The sparse representation is achieved using a matching pursuit algorithm that iteratively selects the dictionary elements (atoms) that best reduce the approximation error. This can be expressed as:
-\[
+```math
+\begin{equation}
 MSE = \frac{1}{N} \left\| \mathbf{x} - \sum_{j=1}^{K} \widehat{\alpha}_j \mathbf{d}_{\widehat{i}_j} \right\|^2
-\]
-where $(\widehat{\alpha}_1, \ldots, \widehat{\alpha}_K, \widehat{i}_1, \ldots, \widehat{i}_K)$ is the solution that minimizes the error:
-\[
+\end{equation}
+```
+where 
+
+$(\widehat{\alpha}_1, \ldots, \widehat{\alpha}_K, \widehat{i}_1, \ldots, \widehat{i}_K)$ is the solution that minimizes the error:
+
+```math
+\begin{equation}
 \arg \min_{\alpha, i} \frac{1}{N} \left\| \mathbf{x} - \sum_{j=1}^{K} \alpha_j \mathbf{d}_{i_j} \right\|^2
-\]
+\end{equation}
+```
 The process continues until $MSE \leq MSE_{\text{max}}$.
 
 ### Coefficient Reordering
 Since the dictionary is not orthogonal, the coefficients $\widehat{\alpha}_1, \ldots, \widehat{\alpha}_K$ are sorted in descending order:
-\[
+```math
+\begin{equation}
 \pi : \{1, \ldots, K\} \to \{\widehat{\alpha}_1, \ldots, \widehat{\alpha}_K\}
-\]
+\end{equation}
+```
+
 so that $\pi(1) < \pi(2) < \ldots < \pi(K)$. The corresponding reordered coefficients are:
-\[
+```math
+\begin{equation}
 \{\alpha_{\pi(1)}, \alpha_{\pi(2)}, \ldots, \alpha_{\pi(K)}\}
-\]
+\end{equation}
+```
 and the corresponding reordered dictionary atoms are:
-\[
+```math
+\begin{equation}
 \{\mathbf{d}_{\pi(1)}, \mathbf{d}_{\pi(2)}, \ldots, \mathbf{d}_{\pi(K)}\}
-\]
+\end{equation}
+```
 
 ### Coefficient Quantization
 The reordered coefficients are then quantized using a Jayant quantizer:
 1. Initialize quantization step size $\Delta$ based on the dynamic range:
-   \[
+   $$
    \Delta_j = \frac{w_j}{2^{n_\alpha}}
-   \]
+   $$
    where $w_j$ is the range of the coefficient $j$ (e.g., $w_j = 2\sqrt{\frac{n}{2}}$ or $w_j = 2$ for cosines or impulses).
 2. Quantize each coefficient:
-   \[
+   $$
    \widetilde{\alpha}_j = \Delta_j \left\lfloor \frac{\alpha_j}{\Delta_j} \right\rfloor + \frac{\Delta_j}{2}
-   \]
+   $$
 3. Determine the next scaling factor $w_{j+1}$:
-   \[
+   $$
    w_{j+1} =
    \begin{cases}
    \frac{w_j}{2^k}, & \text{if } k > 0 \\
    w_j, & \text{otherwise}
    \end{cases}
-   \]
+   $$
    where $k$ is chosen to minimize the difference between $w_j/2$ and $|\widetilde{\alpha}_j| \cdot 2^k$, subject to $w_j/2 - |\widetilde{\alpha}_j| \cdot 2^k > 0$.
 
 ### Position Encoding
 The positions of the selected coefficients are encoded using:
 1. Differential coding:
-   \[
+   $$
    \delta_i = i_{k+1} - i_k
-   \]
+   $$
 2. Exponential-Golomb coding:
    Each difference is represented using a combination of unary and binary coding.
 3. CABAC (Context Adaptive Binary Arithmetic Coding):
