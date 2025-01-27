@@ -50,7 +50,7 @@ The approach simultaneously denoises and compresses power system disturbances by
 ### Dictionary Construction
 The dictionary, $\boldsymbol{\Psi}$, is a concatenation of three matrices:
 ```math
-\boldsymbol{\Psi} = \left[\begin{array}{lll}
+\boldsymbol{D} = \left[\begin{array}{lll}
 \boldsymbol{I} & \mid & \boldsymbol{C} \mid \boldsymbol{S}
 \end{array}\right]_{N \times 3N}
 ```
@@ -63,12 +63,12 @@ The dictionary, $\boldsymbol{\Psi}$, is a concatenation of three matrices:
   $\varepsilon_i = \frac{1}{\sqrt{2}}$ for $i = 0$, otherwise $\varepsilon_i = 1$.
 - **Sine Matrix ($\boldsymbol{S}$)**: A set of sampled discrete sine waveforms ($N \times N$), where
 ```math
-\left[\boldsymbol{S}\right]_{ij} = \sqrt{\frac{2}{L}} \cdot \varepsilon_{i} \cdot \sin\left(\frac{\pi(2j+1)(i+1)}{2N}\right),\quad i=0,\dots,N-1.
+\left[\boldsymbol{S}\right]_{ij} = \sqrt{\frac{2}{N}} \cdot \varepsilon_{i} \cdot \sin\left(\frac{\pi(2j+1)(i+1)}{2N}\right),\quad i=0,\dots,N-1.
 ```
 $\varepsilon_i = \frac{1}{\sqrt{2}}$ for $i = 0$, otherwise $\varepsilon_i = 1$.
 
 ### Sparse Approximation and Matching Pursuit
-The sparse representation is achieved using a matching pursuit algorithm that iteratively selects the dictionary elements (atoms) that best reduce the approximation error. This can be expressed as
+The sparse representation is achieved using a matching pursuit algorithm that iteratively selects the vectors of $\boldsymbol{D}=(\boldsymbol{d} \_1,\dots,\boldsymbol{d} \_{3N})^T$ that best reduce the approximation error. This can be expressed as
 ```math
 MSE = \frac{1}{N} \left\| \mathbf{x} - \sum_{j=1}^{K} \widehat{\alpha}_j \mathbf{d}_{\widehat{i}_j} \right\|^2,
 ```
@@ -77,7 +77,7 @@ where
 ```math
 \widehat{\alpha}_1, \ldots, \widehat{\alpha}_K, \widehat{i}_1, \ldots, \widehat{i}_K=\arg \min_{\alpha_1, \ldots, \alpha_K, i_1, \ldots, i_K} \frac{1}{N} \left\| \mathbf{x} - \sum_{j=1}^{K} \alpha_j \mathbf{d}_{i_j} \right\|^2.
 ```
-The process continues until $MSE \leq MSE_{\text{max}}$.
+The process continues until $MSE \leqslant MSE_{\text{max}}$.
 
 ### Coefficient Reordering
 Since the dictionary is not orthogonal, the coefficients $\widehat{\alpha}_1, \ldots, \widehat{\alpha}_K$ are sorted in descending order
