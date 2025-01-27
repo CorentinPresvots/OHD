@@ -141,6 +141,9 @@ Finally, Context-based Binary Arithmetic Coding (CABAC) is applied to improve co
 
 We used the same approach as before, but for different quality levels (corresponding to a fixed number of atoms). In this case, we search for the number of atoms that minimizes the reconstruction error while ensuring that the total rate does not exceed the constraint $n_\text{tot}$.
 
+## Comparison between proposed reimplementation and original approach 
+
+![Reconstructed signal using the OHD method. Top: extracted from \cite{sabarimalai_manikandan_simultaneous_2015}, where CR = 11.53 and SNR = 34.42 dB. Bottom: result obtained with the reimplemented OHD method proposed in \cite{sabarimalai_manikandan_simultaneous_2015}, achieving SNR = 34.88 dB and CR = 11.60.](Comparison.png)
 
 # Prerequisites
 
