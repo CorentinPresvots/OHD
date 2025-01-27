@@ -48,13 +48,13 @@ By default, the code uses 12 three-phase voltage signals from the [Data_S](https
 The approach simultaneously denoises and compresses power system disturbances by leveraging sparse representation over a hybrid dictionary that combines impulse, discrete cosine, and discrete sine bases. By using overcomplete dictionaries, the method reduces block boundary artifacts and facilitates direct estimation of power quantities from the coefficients associated with sinusoidal components.
 
 ### Dictionary Construction
-The dictionary, $\boldsymbol{\Psi}$, is a concatenation of three matrices:
+The dictionary, $\boldsymbol{D}$, is a concatenation of three matrices:
 ```math
 \boldsymbol{D} = \left[\begin{array}{lll}
-\boldsymbol{I} & \mid & \boldsymbol{C} \mid \boldsymbol{S}
+\boldsymbol{C} & \mid & \boldsymbol{S} \mid \boldsymbol{I}
 \end{array}\right]_{N \times 3N}
 ```
-- **Impulse Matrix ($\boldsymbol{I}$)**: An identity matrix ($N \times N$) representing discrete impulses.
+
 - **Cosine Matrix ($\boldsymbol{C}$)**: A set of sampled discrete cosine waveforms ($N \times N$), where
 ```math
 \left[\boldsymbol{C}\right]_{ij} = \sqrt{\frac{2}{N}} \cdot \varepsilon_{i} \cdot \cos\left(\frac{\pi(2j+1)i}{2N}\right),\quad i=0,\dots,N-1, \ j=0,\dots,N-1
@@ -66,7 +66,7 @@ The dictionary, $\boldsymbol{\Psi}$, is a concatenation of three matrices:
 \left[\boldsymbol{S}\right]_{ij} = \sqrt{\frac{2}{N}} \cdot \varepsilon_{i} \cdot \sin\left(\frac{\pi(2j+1)(i+1)}{2N}\right),\quad i=0,\dots,N-1.
 ```
 $\varepsilon_i = \frac{1}{\sqrt{2}}$ for $i = 0$, otherwise $\varepsilon_i = 1$.
-
+- **Impulse Matrix ($\boldsymbol{I}$)**: An identity matrix ($N \times N$) representing discrete impulses.
 ### Sparse Approximation and Matching Pursuit
 The sparse representation is achieved using a matching pursuit algorithm that iteratively selects the vectors of $\boldsymbol{D}=(\boldsymbol{d} \_1,\dots,\boldsymbol{d} \_{3N})^T$ that best reduce the approximation error. This can be expressed as
 ```math
