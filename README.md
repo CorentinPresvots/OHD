@@ -146,7 +146,7 @@ We used the same approach as before, but for different quality levels (correspon
 
 ![Reconstructed signal using the OHD method](Comparison.png)
 
-*Figure: Reconstructed signal using the OHD method. Top: extracted from [OHD](https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/iet-gtd.2014.0806), where CR = 11.53 and SNR = 34.42 dB. Bottom: result obtained with the reimplemented OHD method, achieving CR = 11.60 and SNR = 34.88 dB.*
+*Figure: Reconstructed signal using the OHD method. Top: extracted from [Sabarimalai et al, 2015](https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/iet-gtd.2014.0806), where CR = 11.53 and SNR = 34.42 dB. Bottom: result obtained with the reimplemented OHD method, achieving CR = 11.60 and SNR = 34.88 dB.*
 
 ---
 # Prerequisites
